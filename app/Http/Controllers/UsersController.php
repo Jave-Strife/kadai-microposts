@@ -57,4 +57,27 @@ class UsersController extends Controller
 
         return view('users.followers', $data );
     }
+
+    public function favorites( $id ){
+        $user = User::find( $id );
+        $emails = [];
+        $users = [];
+        $favorites = $user->favorites()->paginate( 10 );
+
+        foreach( $favorites as $favorite ){
+            array_push( $users, User::find( $favorite->user_id )->name );
+            array_push( $emails, User::find( $favorite->user_id )->email );
+        }
+
+        $data = [
+            'user' => $user,
+            'emails' => $emails,
+            'users' => $users,
+            'favorites' => $favorites,
+        ];
+
+        $data += $this->counts( $user );
+
+        return view('users.favorites', $data );
+    }
 }
